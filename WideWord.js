@@ -6,8 +6,14 @@ var row = 0; //curremt guess (attempt #)
 var col = 0; //current letter for that attempt
 
 var gameOver = false;
-var word = "SQUID"
 
+var wordList = ["sagaz", "âmago", "negro", "êxito", "mexer"];
+var guessList =["assim", "inato", "cerne", "ideia", "fosse"];
+guessList = guessList.concat(wordList);
+
+//var word = "CARRO";
+var word = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
+console.log(word);
 
 window.onload = function(){
     intialize();
@@ -53,12 +59,10 @@ function intialize(){
 
         else if (e.code == "Enter") {
             update();
-            row += 1; //start new row
-            col = 0; //start at 0 for new row
         }
 
 
-        if (!gameOver && row == height) {
+        if (!gameOver && row == heigth) {
             gameOver = true;
             document.getElementById("answer").innerText = word;
         }
@@ -68,7 +72,35 @@ function intialize(){
 
 
 function update() {
+    let guess = "";
+   document.getElementById("answer").innerText = "";
+   
+    //start processing 
+    for (let c = 0; c < width; c++) {
+        let currTile = document.getElementById(row.toString() + "-" + c.toString());
+        let letter = currTile.innerText;
+        guess += letter;
+    }
+
+    guess = guess.toLowerCase();
+    if (!guessList.includes(guess)) {
+        document.getElementById("answer").innerText = "Not in word list";
+        return;
+    }
+
     let correct = 0;
+    let letterCount = {};
+    for (let i =0; i < word.length; i++ ) {
+        letter = word[i];
+        if (letterCount[letter]) {
+            letterCount[letter] += 1;
+        }
+        else {
+            letterCount[letter] = 1;
+        }
+    }
+    
+    // first iteration, check all the correct ones
     for (let c = 0; c < width; c++) {
         let currTile = document.getElementById(row.toString() + '-' + c.toString());
         let letter = currTile.innerText;
@@ -77,16 +109,31 @@ function update() {
         if (word[c] == letter) {
             currTile.classList.add("correct");
             correct += 1;
-        } // Is it in the word?
-        else if (word.includes(letter)) {
-            currTile.classList.add("present");
-        } // Not in the word
-        else {
-            currTile.classList.add("absent");
-        }
+            letterCount[letter] -= 1;
+        } 
 
         if (correct == width) {
             gameOver = true;
         }
     }
+
+    //go again and mark whitch ones are present but in wrong position 
+    for (let c = 0; c < width; c++) {
+        let currTile = document.getElementById(row.toString() + '-' + c.toString());
+        let letter = currTile.innerText;
+
+        if (!currTile.classList.contains("correct")){
+            // Is it in the word?
+            if (word.includes(letter) && letterCount[letter] > 0) {
+                currTile.classList.add("present");
+                letterCount[letter] -= 1;
+            } // Not in the word
+            else {
+                currTile.classList.add("absent");
+            }
+        }
+    }
+
+    row += 1; //start new row
+    col = 0; //start at 0 for new row
 }
