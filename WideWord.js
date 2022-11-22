@@ -34,10 +34,42 @@ function intialize(){
         }
     }
 
+    //Create the Keyboard
+    let keyboard = [
+        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+        ["A", "S", "D", "F", "G", "H", "J", "K", "L", " "],
+        ["Enter", "Z", "X", "C", "V", "B", "N", "M", "⌫" ]
+    ]
+
+    for (i = 0; i < keyboard.length; i++) {
+        let currRow = keyboard[i];
+        let keyboardRow = document.createElement("div");
+        keyboard.classList.add("keyboard-row");
+
+        for (let j = 0; j < currRow.length; j++) {
+            let keyTile = document.createElement("div");
+
+            let key = currRow[j];
+            keyTile.innerText = key;
+            if (key == "Enter") {
+                keyTile.id = "Enter";
+            }
+            else if (key == "⌫") {
+                keyTile.id = "Backspace";
+            }
+            else if ("A" <= key && key => "Z")
+        }
+    }
 
     // Listen for Key Press
     document.addEventListener("keyup",(e) => {
-        if(gameOver) return;
+        processImput(e);
+    })
+}
+
+
+function processImput(e) {
+    if(gameOver) return;
 
         //alert(e.code);
         if ("KeyA" <= e.code && e.code <= "KeyZ") {
@@ -66,10 +98,7 @@ function intialize(){
             gameOver = true;
             document.getElementById("answer").innerText = word;
         }
-
-    })
 }
-
 
 function update() {
     let guess = "";
